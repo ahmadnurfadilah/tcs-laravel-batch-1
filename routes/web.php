@@ -18,21 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/hello', function() {
-//     return "Hello, ini laravel";
-// });
 
-// Route::get('/user', function() {
-//     return "Hello, ini halaman user";
-// });
+Auth::routes();
 
-// Route::redirect('/page-1', 'page-2');
+Route::get('/home', 'HomeController@index')->name('home');
 
-// Route::view('/testing', 'welcome');
+Route::get('/blog', 'BlogController@index'); //->middleware('auth');
 
-// Route::get('/blog/{id}', function() {
-//     return 'asdasd';
-// });
-
-Route::get('hello', 'HelloController@index');
-Route::get('hello/{name}', 'HelloController@show');
+Route::get('/admin', 'AdminController@index')->middleware('auth');
+Route::get('/admin/create-blog', 'AdminController@createBlog')->middleware('auth');
+Route::post('/admin/create-blog', 'AdminController@storeBlog')->middleware('auth');
