@@ -1,59 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCS Day 17</title>
+@extends('layouts.app')
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">TCS-Day17</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Admin</a>
-                    </li>
-                </ul>
-                <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
+@section('content')
     <section id="blog">
         <div class="container mt-4">
             <div class="row">
-                @foreach($blogs as $blog)
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3>{{ $blog->title }}</h3>
-                                <p>{{ $blog->content }}</p>
+                <div class="col-md-12 mb-4">
+                    <form action="">
+                        <input type="text" name="search" value="{{ request()->query('search') }}" class="form-control" placeholder="Search blog ....">
+                    </form>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="row">
+                        @if(count($blogs) > 0)
+                            @foreach($blogs as $blog)
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <img src="/storage/{{ $blog->image }}" alt="" style="width:100%">
+                                            <h3>{{ $blog->title }}</h3>
+                                            <p>{{ $blog->content }}</p>
+                                            <a href="/blog/{{ $blog->id }}" class="btn btn-primary">Read More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="col-md-12">
+                            <div class="alert alert-danger">
+                                Data tidak ada
                             </div>
+                            </div>
+                        @endif
+
+                        <div class="col-md-12 mt-4">
+                            {{ $blogs->links() }}
                         </div>
                     </div>
-                @endforeach
+                </div>
+
+                <div class="col-md-4">
+                    <h4>Recent Post</h4>
+                    <ol>
+                        @foreach($recentBlogs as $blog)
+                            <li><a href="/blog/{{ $blog->id }}">{{ $blog->title }}</a></li>
+                        @endforeach
+                    </ol>
+                </div>
             </div>
         </div>
     </section>
-    
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
-</html>
+@endsection

@@ -12,11 +12,30 @@ class BlogController extends Controller
     //     $this->middleware('auth');
     // }
 
-    public function index()
+    public function index(Request $request)
     {
-        // menampilkan seluruh data
-        $blogs = Blog::get();
-        // $blog = Blog::where('id', 3)->first();
-        return view('blog.index', compact('blogs'));
+        if ($request->search == '') {
+            // menampilkan seluruh data
+            // $blogs = Blog::get();
+
+            // menampilkan paginate data
+            $blogs = Blog::paginate(6);
+            // $blog = Blog::where('id', 3)->first();
+        } else {
+            // $seach = 'testing';
+            // '%testing' => 'ahsdjakshdasdtesting';
+            // 'testing%' => 'testingkjdlksjdfklsdf';
+            // '%testing%' => 'dfsfsfdftestingkjdlksjdfklsdf';
+            $blogs = Blog::where('title', 'like', '%'. $request->search . '%')->paginate(6);
+        }
+
+        $recentBlogs = Blog::orderBy('created_at', 'desc')->take(3)->get();
+        return view('blog.index', compact('blogs', 'recentBlogs'));
+    }
+
+    public function show($id)
+    {
+        $blog = Blog::find($id);
+        return view('blog.show', compact('blog'));
     }
 }

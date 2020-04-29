@@ -17,17 +17,17 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home</a>
+                    <li class="nav-item @if(Request::is('/')) active @endif">
+                        <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Blog</a>
+                    <li class="nav-item @if(Request::is('blog')) active @endif">
+                        <a class="nav-link" href="/blog">Blog</a>
                     </li>
 
                     @if(Auth::check())
                         @if(Auth::user()->role == 'admin')
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Admin</a>
+                            <li class="nav-item @if(Request::is('admin*')) active @endif">
+                                <a class="nav-link" href="/admin">Admin</a>
                             </li>
                         @endif
                     @endif

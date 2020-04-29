@@ -14,24 +14,34 @@
                                 <th scope="col">ID</th>
                                 <th scope="col">Title</th>
                                 <th scope="col">Content</th>
+                                <th scope="col">Created By</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($blogs as $blog)
+                            @if(count($blogs) > 0)
+                                @foreach($blogs as $blog)
+                                    <tr>
+                                        <td>{{ $blog->id }}</td>
+                                        <td>{{ $blog->title }}</td>
+                                        <td>{{ $blog->content }}</td>
+                                        <td>{{ $blog->user->name }}</td>
+                                        <td>
+                                            <a href="/admin/edit-blog/{{ $blog->id }}" class="btn btn-primary">Edit</a>
+                                            <a href="/admin/delete-blog/{{ $blog->id }}" class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td>{{ $blog->id }}</td>
-                                    <td>{{ $blog->title }}</td>
-                                    <td>{{ $blog->content }}</td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary">Edit</a>
-                                        <a href="#" class="btn btn-danger">Delete</a>
-                                    </td>
+                                    <td colspan="4">Tidak ada data</td>
                                 </tr>
-                            @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
+
+                {{ $blogs->links() }}
             </div>
         </div>
 @endsection
