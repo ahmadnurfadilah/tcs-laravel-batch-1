@@ -4,53 +4,52 @@ namespace App\Http\Controllers;
 
 use DB;
 use Auth;
+use Mail;
+use Excel;
 use Storage;
 use Validator;
 use Illuminate\Http\Request;
 use App\Blog;
+use App\Mail\SendBlogToAdmin;
+use App\Exports\BlogsExport;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->role == 'admin') {
-            // $blogs = Blog::where('id', 1)->first();
-            // $blogs = Blog::find(3);
+        // $blogs = Blog::where('id', 1)->first();
+        // $blogs = Blog::find(3);
 
-            // Menampilkan seluruh data
-            // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->get();
+        // Menampilkan seluruh data
+        // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->get();
 
-            // Paginate
-            
-            // Eloquent
-            // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->paginate(6);
+        // Paginate
+        
+        // Eloquent
+        // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->paginate(6);
 
-            // Query Builder
-            $blogs = DB::table('blogs')
-            ->select('blogs.id', 'blogs.title', 'blogs.content', 'users.name')
-            ->join('users', 'users.id', 'blogs.user_id')
-            ->orderBy('blogs.id', 'desc')->paginate(6);
-            // dd($blogs);
-            return view('admin.index', compact('blogs'));
-        } else {
-            return 'Halaman ini khusu admin';
-        }
+        // Query Builder
+        $blogs = DB::table('blogs')
+        ->select('blogs.id', 'blogs.title', 'blogs.content', 'users.name', 'blog_categories.name as category')
+        ->join('users', 'users.id', 'blogs.user_id')
+        ->join('blog_categories', 'blog_categories.id', 'blogs.category_id')
+        ->orderBy('blogs.id', 'desc')->paginate(6);
+        // dd($blogs);
+        return view('admin.index', compact('blogs'));
     }
 
     public function edit($id)
     {
         $blog = Blog::find($id);
         // $blog = Blog::where('id', $id)->first();
-        return view('admin.edit-blog', compact('blog'));
+        $categories = DB::table('blog_categories')->get();
+        return view('admin.edit-blog', compact('blog', 'categories'));
     }
 
     public function createBlog()
     {
-        if (Auth::user()->role == 'admin') {
-            return view('admin.create-blog');
-        } else {
-            return 'Halaman ini khusu admin';
-        }
+        $categories = DB::table('blog_categories')->get();
+        return view('admin.create-blog', compact('categories'));
     }
 
     public function updateBlog($id, Request $request)
@@ -76,7 +75,9 @@ class AdminController extends Controller
         DB::table('blogs')->where('id', $id)->update([
             'title' => $request->title,
             'content' => $request->content,
+            'category_id' => $request->category,
         ]);
+        notify()->success('Blog: '. $request->title .'  berhasil diedit!');
         return redirect('/admin');
     }
 
@@ -110,12 +111,21 @@ class AdminController extends Controller
         // ]);
 
         // Query Builder
+
         DB::table('blogs')->insert([
             'user_id' => Auth::id(),
+            'category_id' => $request->category,
             'title' => $request->title,
             'content' => $request->content,
             'image' => $thumbnail,
         ]);
+
+        // $admins = DB::table('users')->where('role', 'admin')->get();
+        // foreach ($admins as $admin) {
+        //     Mail::to($admin->email)->send(new SendBlogToAdmin());
+        // }
+
+        notify()->success('Blog berhasil dibuat!');
 
         return redirect('/admin');
     }
@@ -132,5 +142,10 @@ class AdminController extends Controller
         DB::table('blogs')->where('id', $id)->delete();
         
         return redirect('/admin');
+    }
+
+    public function export()
+    {
+        return Excel::download(new BlogsExport, 'blogs.xlsx');
     }
 }

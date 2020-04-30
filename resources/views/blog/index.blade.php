@@ -46,6 +46,13 @@
                             <li><a href="/blog/{{ $blog->id }}">{{ $blog->title }}</a></li>
                         @endforeach
                     </ol>
+
+					<h4>Category</h4>
+					<ol>
+                        @foreach($categories as $category)
+                            <li><a href="/blog?category={{ $category->id }}">{{ $category->name }}</a></li>
+                        @endforeach
+                    </ol>
                 </div>
             </div>
         </div>

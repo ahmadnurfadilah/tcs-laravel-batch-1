@@ -25,6 +25,14 @@
                         <label for="exampleInputEmail1">Title</label>
                         <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                     </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Category</label>
+                        <select name="category" id="category" class="form-control">
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     @error('content')
                         <div class="alert alert-danger">
                             {{ $message }}

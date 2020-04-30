@@ -5,6 +5,7 @@
         <div class="card">
             <div class="card-header">
                 <a href="/admin/create-blog" class="btn btn-primary">Add New Blog</a>
+                <a href="/admin/export-blog" class="btn btn-primary">Export Blog</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -14,6 +15,7 @@
                                 <th scope="col">ID</th>
                                 <th scope="col">Title</th>
                                 <th scope="col">Content</th>
+                                <th scope="col">Category</th>
                                 <th scope="col">Created By</th>
                                 <th scope="col">Action</th>
                             </tr>
@@ -25,6 +27,7 @@
                                         <td>{{ $blog->id }}</td>
                                         <td>{{ $blog->title }}</td>
                                         <td>{{ $blog->content }}</td>
+                                        <td>{{ $blog->category }}</td>
                                         <td>{{ $blog->name }}</td>
                                         <td>
                                             <a href="/admin/edit-blog/{{ $blog->id }}" class="btn btn-primary">Edit</a>
