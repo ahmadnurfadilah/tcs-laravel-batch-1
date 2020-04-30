@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Auth;
 use Storage;
 use Validator;
@@ -20,7 +21,16 @@ class AdminController extends Controller
             // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->get();
 
             // Paginate
-            $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->paginate(6);
+            
+            // Eloquent
+            // $blogs = Blog::where('id', '>', 0)->orderBy('id', 'desc')->paginate(6);
+
+            // Query Builder
+            $blogs = DB::table('blogs')
+            ->select('blogs.id', 'blogs.title', 'blogs.content', 'users.name')
+            ->join('users', 'users.id', 'blogs.user_id')
+            ->orderBy('blogs.id', 'desc')->paginate(6);
+            // dd($blogs);
             return view('admin.index', compact('blogs'));
         } else {
             return 'Halaman ini khusu admin';
@@ -50,17 +60,23 @@ class AdminController extends Controller
             'content' => 'required',
         ])->validate();
 
+        // Ini eloquent
         // Blog::where('id', $id)->update([
         //     'title' => $request->title,
         //     'content' => $request->content,
         // ]);
 
         // $blog = Blog::where('id', $id)->first();
-        $blog = Blog::find($id);
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-        $blog->save();
+        // $blog = Blog::find($id);
+        // $blog->title = $request->title;
+        // $blog->content = $request->content;
+        // $blog->save();
 
+        // Ini query builder
+        DB::table('blogs')->where('id', $id)->update([
+            'title' => $request->title,
+            'content' => $request->content,
+        ]);
         return redirect('/admin');
     }
 
@@ -71,13 +87,6 @@ class AdminController extends Controller
             'content' => 'required',
         ])->validate();
 
-        // Blog::create([
-        //     'user_id' => Auth::id(),
-        //     'title' => $request->title,
-        //     'content' => $request->content,
-        // ]);
-
-        // dd();
 
         if ($request->image) {
             $thumbnail = Storage::put('thumbnail', $request->image);
@@ -86,12 +95,27 @@ class AdminController extends Controller
             $thumbnail = null;
         }
 
-        $blog = new Blog();
-        $blog->user_id = Auth::id();
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-        $blog->image = $thumbnail;
-        $blog->save();
+        // Eloquent
+        // $blog = new Blog();
+        // $blog->user_id = Auth::id();
+        // $blog->title = $request->title;
+        // $blog->content = $request->content;
+        // $blog->image = $thumbnail;
+        // $blog->save();
+
+        // Blog::create([
+        //     'user_id' => Auth::id(),
+        //     'title' => $request->title,
+        //     'content' => $request->content,
+        // ]);
+
+        // Query Builder
+        DB::table('blogs')->insert([
+            'user_id' => Auth::id(),
+            'title' => $request->title,
+            'content' => $request->content,
+            'image' => $thumbnail,
+        ]);
 
         return redirect('/admin');
     }
@@ -100,7 +124,13 @@ class AdminController extends Controller
     {
         $blog = Blog::find($id);
         Storage::delete($blog);
-        Blog::where('id', $id)->delete();
+
+        // Ini Eloquent
+        // Blog::where('id', $id)->delete();
+
+        // Ini Query builder
+        DB::table('blogs')->where('id', $id)->delete();
+        
         return redirect('/admin');
     }
 }

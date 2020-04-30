@@ -25,7 +25,7 @@
                                         <td>{{ $blog->id }}</td>
                                         <td>{{ $blog->title }}</td>
                                         <td>{{ $blog->content }}</td>
-                                        <td>{{ $blog->user->name }}</td>
+                                        <td>{{ $blog->name }}</td>
                                         <td>
                                             <a href="/admin/edit-blog/{{ $blog->id }}" class="btn btn-primary">Edit</a>
                                             <a href="/admin/delete-blog/{{ $blog->id }}" class="btn btn-danger">Delete</a>
